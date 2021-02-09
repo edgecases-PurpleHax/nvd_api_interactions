@@ -11,6 +11,12 @@ import urllib
 # todo: This should be done with argparse at first. Make it work with CLI then eventually figure out how to make it
 #  work with Flask to make a pretty dashboard or some shit.
 
+class MyParser(argparse.ArgumentParser):
+    def error(self, message):
+        sys.stderr.write(f'error: {message}\n')
+        self.print_help()
+        sys.exit()
+
 
 def format_cve_information(cve):
     for test in cve.get('result').get('CVE_Items'):
@@ -123,7 +129,7 @@ def format_existing_json(file):
 
 def parse_args():
     description = "A script to interact with the NVD API."
-    parser = argparse.ArgumentParser(description=description)
+    parser = MyParser(description=description)
     parser.add_argument("-a", "--all", action="store_true", help="Use this only one time. It will write a file with the"
                                                                  "entire NVD database")
     parser.add_argument("-i", "--get-by-id", action="store_true", help="Requires -I/--ID <CVE ID>. Gets information "
@@ -139,7 +145,7 @@ def parse_args():
     parser.add_argument("-f", "--format", action="store_true", help="Requires -F/--File <file name>. Formats an existing json file"
                                                                     "from NVD API")
     parser.add_argument("-F", "--File", action="store", help="Enter file name to format")
-    args = parser.parse_args()
+    args = parser.parse_args(args=None if sys.argv[1:] else ['--help'])
     return args
 
 
