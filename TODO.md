@@ -1,4 +1,4 @@
-# List of things I still need to do with this script
+# Things to do for nvd_api_interaction
 1. Finish the --get-all function
 2. Write the read me file
 3. Do a license to get better at remembering to do licenses
