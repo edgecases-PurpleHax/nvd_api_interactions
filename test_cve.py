@@ -1,7 +1,9 @@
 import os
-from requests_mock.mocker import Mocker
-from cve import get_cve_by_id, get_all_cves
+
 import pytest
+from requests_mock.mocker import Mocker
+
+from cve import get_all_cves, get_cve_by_id
 
 
 def get_test_file(file):
