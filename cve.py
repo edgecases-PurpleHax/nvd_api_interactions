@@ -7,7 +7,6 @@ import argparse
 import sys
 import urllib
 
-
 # todo: This should be done with argparse at first. Make it work with CLI then eventually figure out how to make it
 #  work with Flask to make a pretty dashboard or some shit.
 
@@ -20,7 +19,8 @@ class MyParser(argparse.ArgumentParser):
 
 def format_cve_information(cve):
     for test in cve.get('result').get('CVE_Items'):
-        return f"""
+        try:
+            return f"""
 {test.get('cve').get('CVE_data_meta').get('ID')} Assigned by: {test.get(
                         'cve').get('CVE_data_meta').get('ASSIGNER')} and Published on {datetime.datetime.strptime(test.get(
                         'publishedDate'), '%Y-%m-%dT%H:%MZ').strftime("%m/%d/%y")}
@@ -48,6 +48,9 @@ Availability Impact: {test.get('impact',
                     'baseMetricV3').get('cvssV3').get('availabilityImpact').title()}
 ______________________________________________________________________
 """
+        except AttributeError as i:
+            return f"{test.get('cve').get('CVE_data_meta').get('ID')} has invalid data. Sorry! "
+            break
 
 
 def get_cve_after_date(start_date):
@@ -110,14 +113,34 @@ def get_all_cves():
     print('[-] Warning. This process may (will) take a long time')
     print('[-] You may want to get a drink, take a smoke break, or nap')
     print('[-] Seriously. There are over 120,000 CVEs, and there is a 3 second break between every 20')
-    to_continue = input('[+] Continue? Y/N')
+    to_continue = input('[+] Continue? Y/N ')
     if to_continue.lower() == "y":
-        # todo: This will make a call to the NVD, get the test results, and write all of them to a file. It is going
-        #  to be a slow process. Maybe add a warning that this should only be done once per the documentation.
-        pass
+        r = requests.get(f'https://services.nvd.nist.gov/rest/json/cves/1.0')
+        if r.json()['totalResults'] > 20:
+            page = 0
+            while page < r.json()['totalResults']:
+                print(f"There are {r.json().get('totalResults')} total results. The results will be paginated")
+                next_page = requests.get(f'https://services.nvd.nist.gov/rest/json/cves/1.0?startIndex={page}')
+                if page==0:
+                    print(f'This is page #{page+1}')
+                else:
+                    print(f'This is page #{int(page/20+1)}')
+                page = page+20
+                time.sleep(3)
+                for cve in next_page.json().get('result').get('CVE_Items'):
+                    try:
+                        with open(f'Vulnerability_complete.txt', 'a+') as f:
+                            f.write(format_cve_information(next_page.json()))
+                    except NameError:
+                        with open(f'Vulnerability_complete.txt', 'w+') as f:
+                            f.write(format_cve_information(next_page.json()))
+                    except:
+                        pass
+        else:
+            return r.json()
+        return 0
     else:
         sys.exit()
-
 
 def format_existing_json(file):
     to_format = {}
