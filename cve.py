@@ -1,11 +1,12 @@
-import requests
-import json
-import time
-import datetime
-import textwrap
 import argparse
+import datetime
+import json
 import sys
+import textwrap
+import time
 import urllib
+
+import requests
 
 # todo: This should be done with argparse at first. Make it work with CLI then eventually figure out how to make it
 #  work with Flask to make a pretty dashboard or some shit.
