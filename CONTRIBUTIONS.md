@@ -7,3 +7,5 @@
 5. After your PR is merged, I will add your username to the contributor list
 ## Contributors
 * rwils83
+* shepherdjay- Thanks for starting the testing suite!
+* Foo-Maker- Thanks for working on the add all function!
