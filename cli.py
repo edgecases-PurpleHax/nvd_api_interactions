@@ -1,7 +1,7 @@
 import sys
 from PyInquirer import prompt
-
-from examples import custom_style_1, custom_style_2, custom_style_3
+import cve
+from examples import custom_style_3
 
 
 def main_screen():
@@ -11,7 +11,7 @@ def main_screen():
         'message': 'Welcome to NVD Interactions',
         'choices': ["CVE", "Format File", "Exit"]
     }
-    answers = prompt(menu_prompt)
+    answers = prompt(menu_prompt, style=custom_style_3)
     return answers['Main Screen']
 
 
@@ -22,9 +22,8 @@ def cve_option():
         'message': 'CVE Main Screen',
         'choices': ['Get by ID', 'Get All', 'Get from File', 'Exit']
     }
-    answers = prompt(menu_prompt)
+    answers = prompt(menu_prompt, style=custom_style_3)
     if answers['Cve'] == 'Get by ID':
-        from cve import get_cve_by_id
         id_prompt = {
             'type': 'input',
             'name': 'cve_id',
@@ -46,13 +45,13 @@ def cve_option():
         write_file = prompt(outfile)
         if write_file['output']:
             print(f"will write file{write_file.get('file_name')}")
-        print(get_cve_by_id(cve_id))
+        print(cve.get_cve_by_id(cve_id))
     else:
         print('More To Come')
 
 
-def formating_options():
-    return "More to come"
+def formatting_options():
+    print("More to come")
 
 
 def main():
@@ -60,7 +59,7 @@ def main():
     if answers == "CVE":
         cve_option()
     if answers == "Format File":
-        print("More to come")
+        formatting_options()
     if answers == "Exit":
         print("Bye for now")
         sys.exit()
