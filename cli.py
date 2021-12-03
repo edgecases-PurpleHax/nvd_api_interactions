@@ -3,6 +3,7 @@ from PyInquirer import prompt
 
 from examples import custom_style_1, custom_style_2, custom_style_3
 
+
 def main_screen():
     menu_prompt = {
         'type': 'list',
@@ -48,6 +49,10 @@ def cve_option():
         print(get_cve_by_id(cve_id))
     else:
         print('More To Come')
+
+
+def formating_options():
+    return "More to come"
 
 
 def main():
