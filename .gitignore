@@ -1,3 +1,7 @@
 .idea
 .pytest_cache
 __pycache__
+venv/
+vuln_reports/
+parsed_data
+testing_output.txt

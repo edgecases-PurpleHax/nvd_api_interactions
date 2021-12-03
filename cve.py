@@ -5,8 +5,8 @@ import sys
 import textwrap
 import time
 import urllib
-
 import requests
+
 
 # todo: This should be done with argparse at first. Make it work with CLI then eventually figure out how to make it
 #  work with Flask to make a pretty dashboard or some shit.
@@ -24,30 +24,30 @@ def format_cve_information(cve):
         try:
             return f"""
 {test.get('cve').get('CVE_data_meta').get('ID')} Assigned by: {test.get(
-                        'cve').get('CVE_data_meta').get('ASSIGNER')} and Published on {datetime.datetime.strptime(test.get(
-                        'publishedDate'), '%Y-%m-%dT%H:%MZ').strftime("%m/%d/%y")}
+                'cve').get('CVE_data_meta').get('ASSIGNER')} and Published on {datetime.datetime.strptime(test.get(
+                'publishedDate'), '%Y-%m-%dT%H:%MZ').strftime("%m/%d/%y")}
 ______________________________________________________________________
-Description: {textwrap.fill(test.get('cve').get('description').get('description_data')[0].get('value'),60)}
+Description: {textwrap.fill(test.get('cve').get('description').get('description_data')[0].get('value'), 60)}
 _____________
 Attack Vector: {test.get('impact',
-                    {'baseMetricV3':{'cvssV3':{'attackVector':'Not Yet Assigned'}}}).get('baseMetricV3').get(
-                    'cvssV3').get('attackVector').title()}
+                         {'baseMetricV3': {'cvssV3': {'attackVector': 'Not Yet Assigned'}}}).get('baseMetricV3').get(
+                'cvssV3').get('attackVector').title()}
 _____________
 Score: {test.get('impact',
-                    {'baseMetricV3':{'cvssV3':{'baseScore':'Not Yet Assigned'}}}).get('baseMetricV3').get('cvssV3').get(
-                    'baseScore')}
+                 {'baseMetricV3': {'cvssV3': {'baseScore': 'Not Yet Assigned'}}}).get('baseMetricV3').get('cvssV3').get(
+                'baseScore')}
 _____________
 Confidentiality Impact: {test.get('impact',
-                                 {'baseMetricV3':{'cvssV3':{'confidentialityImpact':'Not Yet Assigned'}}}).get(
-                    'baseMetricV3').get('cvssV3').get('confidentialityImpact').title()}
+                                  {'baseMetricV3': {'cvssV3': {'confidentialityImpact': 'Not Yet Assigned'}}}).get(
+                'baseMetricV3').get('cvssV3').get('confidentialityImpact').title()}
 _____________
 Integrity Impact: {test.get('impact',
-                           {'baseMetricV3':{'cvssV3':{'integrityImpact':'Not Yet Assigned'}}}).get(
-                    'baseMetricV3').get('cvssV3').get('integrityImpact').title()}
+                            {'baseMetricV3': {'cvssV3': {'integrityImpact': 'Not Yet Assigned'}}}).get(
+                'baseMetricV3').get('cvssV3').get('integrityImpact').title()}
 _____________
 Availability Impact: {test.get('impact',
-                              {'baseMetricV3':{'cvssV3':{'availabilityImpact':'Not Yet Assigned'}}}).get(
-                    'baseMetricV3').get('cvssV3').get('availabilityImpact').title()}
+                               {'baseMetricV3': {'cvssV3': {'availabilityImpact': 'Not Yet Assigned'}}}).get(
+                'baseMetricV3').get('cvssV3').get('availabilityImpact').title()}
 ______________________________________________________________________
 """
         except AttributeError as i:
@@ -70,19 +70,32 @@ def get_cve_after_date(start_date):
                 f"https://services.nvd.nist.gov/rest/json/cves/1.0?startIndex={page}&pubStartDate={start_date}T00:00:00:000 UTC-05:00"
             )
             if page == 0:
-                print(f"This is page #{page+1}")
+                print(f"This is page #{page + 1}")
             else:
-                print(f"This is page #{int(page/20+1)}")
+                print(f"This is page #{int(page / 20 + 1)}")
             page = page + 20
             time.sleep(3)
             for cve in next_page.json().get("result").get("CVE_Items"):
                 with open(f"Vulnerability_list_since_{start_date}.txt",
                           "a+") as f:
-
                     f.write(format_cve_information(next_page.json()))
     else:
         return r.json()
     return 0
+
+
+def load_parsed_data_file(file, output=False, outfile=None):
+    if not output:
+        with open(file, 'r') as f:
+            for line in f.readlines():
+                # print(line.strip())
+                print(get_cve_by_id(line.strip()))
+    elif output:
+        print(f"Writing to {outfile}")
+        with open(file, 'r') as f:
+            for line in f.readlines():
+                with open(outfile, 'a') as g:
+                    g.write(get_cve_by_id(line.strip()))
 
 
 def get_cve_between(start_date, end_date):
@@ -145,9 +158,9 @@ def get_all_cves():
                     f"https://services.nvd.nist.gov/rest/json/cves/1.0?startIndex={page}"
                 )
                 if page == 0:
-                    print(f"This is page #{page+1}")
+                    print(f"This is page #{page + 1}")
                 else:
-                    print(f"This is page #{int(page/20+1)}")
+                    print(f"This is page #{int(page / 20 + 1)}")
                 page = page + 20
                 time.sleep(3)
                 for cve in next_page.json().get("result").get("CVE_Items"):
@@ -182,14 +195,14 @@ def parse_args():
         "--all",
         action="store_true",
         help="Use this only one time. It will write a file with the"
-        "entire NVD database",
+             "entire NVD database",
     )
     parser.add_argument(
         "-i",
         "--get-by-id",
         action="store_true",
         help="Requires -I/--ID <CVE ID>. Gets information "
-        "about CVE ID provided",
+             "about CVE ID provided",
     )
     parser.add_argument("-I",
                         "--ID",
@@ -200,8 +213,8 @@ def parse_args():
         "--between-dates",
         action="store_true",
         help="Requires -S/--Start-Date <Start Date> "
-        "and -E/--End-Date <End Date>,gets all "
-        "CVEs between the start and end date",
+             "and -E/--End-Date <End Date>,gets all "
+             "CVEs between the start and end date",
     )
     parser.add_argument("-S",
                         "--Start-Date",
@@ -216,19 +229,21 @@ def parse_args():
         "--After-Date",
         action="store_true",
         help="Requires -S/--Start-Date <start date>. Gets"
-        " all CVE from Start date to current date",
+             " all CVE from Start date to current date",
     )
     parser.add_argument(
         "-f",
         "--format",
         action="store_true",
         help="Requires -F/--File <file name>. Formats an existing json file"
-        "from NVD API",
+             "from NVD API",
     )
     parser.add_argument("-F",
                         "--File",
                         action="store",
                         help="Enter file name to format")
+    parser.add_argument("-if", "--input-file", action="store", help="input new line separated file of cve identifiers")
+    parser.add_argument("-o", "--output", action="store")
     args = parser.parse_args(args=None if sys.argv[1:] else ["--help"])
     return args
 
@@ -264,3 +279,8 @@ if __name__ == "__main__":
             print("[-] You must enter a file name. Enter --help for example.")
         else:
             format_existing_json(args.File)
+    if args.input_file:
+        if args.output:
+            load_parsed_data_file(args.input_file, output=True, outfile=args.output)
+        else:
+            load_parsed_data_file(args.input_file)
