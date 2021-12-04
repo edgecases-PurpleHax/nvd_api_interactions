@@ -7,6 +7,10 @@ from api_interactions import cve
 
 
 def main_screen():
+    """
+    Defines the main menu for the CLI tool
+    :return: returns the prompts for the main screen
+    """
     menu_prompt = {
         "type": "list",
         "name": "Main Screen",
@@ -18,6 +22,10 @@ def main_screen():
 
 
 def cve_option():
+    """
+    Defines the menu for the CVE Submenu
+    :return: Returns the prompts for the CVE Menu
+    """
     menu_prompt = {
         "type": "list",
         "name": "Cve",
@@ -26,6 +34,9 @@ def cve_option():
     }
     answers = prompt(menu_prompt, style=custom_style_3)
     if answers["Cve"] == "Get by ID":
+        """
+        Defines the Submenu for Get by ID Selection
+        """
         id_prompt = {
             "type": "input",
             "name": "cve_id",
@@ -51,6 +62,9 @@ def cve_option():
             print(f"will write file{write_file.get('file_name')}")
         print(cve.get_cve_by_id(cve_id))
     if answers["Cve"] == "Get All":
+        """
+        Defines the Submenu for Get All Selection
+        """
         sub_menu = [{
             "type":
             "confirm",
@@ -65,6 +79,9 @@ def cve_option():
         if get_all_prompt["getallconfirm"]:
             cve.get_all_cves()
     if answers["Cve"] == "Get from File":
+        """
+        Defines the Submenu for Get from File Selection
+        """
         submenu = [
             {
                 "type":
@@ -107,6 +124,10 @@ def cve_option():
 
 
 def formatting_options():
+    """
+    Defines the menu for the Formatting Submenu
+    :return: Returns the prompts for the Formatting Submenu
+    """
     menu_prompt = {
         "type": "list",
         "name": "Formatting",
@@ -121,11 +142,17 @@ def formatting_options():
         "message": "Enter the name of the file to load: ",
     }]
     if answers["Formatting"] == "Format existing NVD Json":
+        """
+        Defines the Submenu for Get from File Selection
+        """
         sub_answer = prompt(sub_menu, style=custom_style_3)
         print(
             f"Writing file: {cve.format_existing_json(sub_answer['loadfile'])}"
         )
     if answers["Formatting"] == "Parse Lacework Report":
+        """
+        Defines the Submenu for Get from File Selection
+        """
         sub_answer = prompt(sub_menu, style=custom_style_3)
         print(
             f'Writing file: {cve.lacework_report_parser(sub_answer["loadfile"])}'
@@ -133,6 +160,10 @@ def formatting_options():
 
 
 def main():
+    """
+    Creates function for main and allows to run Submenus
+    :return: Nothing until exit, then prints "Bye for Now"
+    """
     answers = main_screen()
     if answers == "CVE":
         cve_option()
@@ -145,4 +176,7 @@ def main():
 
 if __name__ == "__main__":
     while True:
+        """
+        Creates loop to run CLI tool until exit. 
+        """
         main()
