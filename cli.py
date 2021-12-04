@@ -3,7 +3,7 @@ import sys
 from examples import custom_style_3
 from PyInquirer import prompt
 
-import cve
+from api_interactions import cve
 
 
 def main_screen():
