@@ -1,7 +1,9 @@
 import sys
-from PyInquirer import prompt
-import cve
+
 from examples import custom_style_3
+from PyInquirer import prompt
+
+import cve
 
 
 def main_screen():
