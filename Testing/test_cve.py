@@ -3,8 +3,7 @@ import os
 import pytest
 from requests_mock.mocker import Mocker
 
-from api_interactions.cve import get_all_cves
-from api_interactions.cve import get_cve_by_id
+from api_interactions.cve import get_all_cves, get_cve_by_id
 
 
 def get_test_file(file):
