@@ -155,9 +155,11 @@ def get_all_cves():
                 f"https://services.nvd.nist.gov/rest/json/cves/1.0?startIndex={page}"
             )
             if page == 0:
-                print(f"Downloading {page + 1}/{int(r.json().get('totalResults') / 20 + 1)}")
+                print(
+                    f"Downloading {page + 1}/{int(r.json().get('totalResults') / 20 + 1)}")
             else:
-                print(f"Downloading {int(page / 20 + 1)}/{int(r.json().get('totalResults') / 20 + 1)}")
+                print(
+                    f"Downloading {int(page / 20 + 1)}/{int(r.json().get('totalResults') / 20 + 1)}")
             page = page + 20
             time.sleep(3)
             for cve in next_page.json().get("result").get("CVE_Items"):
@@ -260,7 +262,8 @@ def parse_args():
                         "--File",
                         action="store",
                         help="Enter file name to format")
-    parser.add_argument("-if", "--input-file", action="store", help="input new line separated file of cve identifiers")
+    parser.add_argument("-if", "--input-file", action="store",
+                        help="input new line separated file of cve identifiers")
     parser.add_argument("-o", "--output", action="store")
     args = parser.parse_args(args=None if sys.argv[1:] else ["--help"])
     return args
@@ -299,6 +302,7 @@ if __name__ == "__main__":
             format_existing_json(args.File)
     if args.input_file:
         if args.output:
-            load_parsed_data_file(args.input_file, output=True, outfile=args.output)
+            load_parsed_data_file(
+                args.input_file, output=True, outfile=args.output)
         else:
             load_parsed_data_file(args.input_file)
