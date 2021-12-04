@@ -6,6 +6,7 @@ import textwrap
 import time
 import urllib
 import requests
+import csv
 
 
 # todo: This should be done with argparse at first. Make it work with CLI then eventually figure out how to make it
@@ -19,6 +20,7 @@ class MyParser(argparse.ArgumentParser):
         sys.exit()
 
 
+# Api Interactions
 def format_cve_information(cve):
     for test in cve.get("result").get("CVE_Items"):
         try:
@@ -91,7 +93,7 @@ def load_parsed_data_file(file, output=False, outfile=None):
                 # print(line.strip())
                 print(get_cve_by_id(line.strip()))
     elif output:
-        print(f"Writing to {outfile}")
+        print(f"Writing to {outfile}. No output will display.")
         with open(file, 'r') as f:
             for line in f.readlines():
                 with open(outfile, 'a') as g:
@@ -140,53 +142,69 @@ def get_cve_by_id(cve_id):
 
 
 def get_all_cves():
-    print("[-] Warning. This process may (will) take a long time")
-    print("[-] You may want to get a drink, take a smoke break, or nap")
-    print(
-        "[-] Seriously. There are over 120,000 CVEs, and there is a 3 second break between every 20"
-    )
-    to_continue = input("[+] Continue? Y/N ")
-    if to_continue.lower() == "y":
-        r = requests.get(f"https://services.nvd.nist.gov/rest/json/cves/1.0")
-        if r.json()["totalResults"] > 20:
-            page = 0
-            while page < r.json()["totalResults"]:
-                print(
-                    f"There are {r.json().get('totalResults')} total results. The results will be paginated"
-                )
-                next_page = requests.get(
-                    f"https://services.nvd.nist.gov/rest/json/cves/1.0?startIndex={page}"
-                )
-                if page == 0:
-                    print(f"This is page #{page + 1}")
-                else:
-                    print(f"This is page #{int(page / 20 + 1)}")
-                page = page + 20
-                time.sleep(3)
-                for cve in next_page.json().get("result").get("CVE_Items"):
-                    try:
-                        with open(f"Vulnerability_complete.txt", "a+") as f:
-                            f.write(format_cve_information(next_page.json()))
-                    except NameError:
-                        with open(f"Vulnerability_complete.txt", "w+") as f:
-                            f.write(format_cve_information(next_page.json()))
-                    except:
-                        pass
+    r = requests.get(f"https://services.nvd.nist.gov/rest/json/cves/1.0")
+    if r.json()["totalResults"] > 20:
+        print(
+            f"There are {r.json().get('totalResults')} total results. The results will be paginated, for a total of"
+            f" {int(r.json().get('totalResults') / 20 + 1)} pages, which will take around "
+            f"{datetime.timedelta(seconds=int((r.json().get('totalResults') / 20 + 1)) * 3)} To finish."
+        )
+        page = 0
+        while page < r.json()["totalResults"]:
+            next_page = requests.get(
+                f"https://services.nvd.nist.gov/rest/json/cves/1.0?startIndex={page}"
+            )
+            if page == 0:
+                print(f"Downloading {page + 1}/{int(r.json().get('totalResults') / 20 + 1)}")
+            else:
+                print(f"Downloading {int(page / 20 + 1)}/{int(r.json().get('totalResults') / 20 + 1)}")
+            page = page + 20
+            time.sleep(3)
+            for cve in next_page.json().get("result").get("CVE_Items"):
+                try:
+                    with open(f"Vulnerability_complete.txt", "a+") as f:
+                        f.write(format_cve_information(next_page.json()))
+                except NameError:
+                    with open(f"Vulnerability_complete.txt", "w+") as f:
+                        f.write(format_cve_information(next_page.json()))
+                except:
+                    pass
         else:
             return r.json()
-        return 0
-    else:
-        sys.exit()
+    return 0
 
 
+# Formatting scripts
 def format_existing_json(file):
     to_format = {}
     with open(file, "r") as f:
         to_format.update(json.load(f))
-    with open(f"{datetime.date.today()}_formatted.txt", "a+") as f:
+    file = str(file).split('.')[0]
+    with open(f"{file}_formatted.txt", "a+") as f:
         f.write(format_cve_information(to_format))
+    return f"{file}_formatted.txt"
 
 
+def lacework_report_parser(report):
+    cves = []
+    with open(report, 'r') as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        line_count = 0
+        for row in csv_reader:
+            if line_count == 0:
+                line_count += 1
+                pass
+            else:
+                if row[0] not in cves:
+                    cves.append(row[0])
+    report = str(report).split('.')[0]
+    with open(f'{report}_report_output_{datetime.date.today()}.txt', 'w') as file:
+        for cve in cves:
+            file.write(cve+"\r")
+    return f'{report}_report_output_{datetime.date.today()}.txt'
+
+
+# Argument parsing: Used when CLI tool not run
 def parse_args():
     description = "A script to interact with the NVD API."
     parser = MyParser(description=description)

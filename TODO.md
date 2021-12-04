@@ -4,4 +4,4 @@
 3. Do a license to get better at remembering to do licenses
 4. Write Unittests for this thing
 5. Document the code properly
-6. That should cover v1
+6. Refactoring for use as a CLI tool. Will release as v1 once that work is done
