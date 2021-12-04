@@ -1,7 +1,9 @@
 # Things to do for nvd_api_interaction
-1. Finish the --get-all function
-2. Write the read me file
-3. Do a license to get better at remembering to do licenses
-4. Write Unittests for this thing
-5. Document the code properly
-6. That should cover v1
+
+- [x] Finish the --get-all function (Thanks @Foo-Maker)
+- [ ] Write the read me file: In progress
+- [ ] Do a license to get better at remembering to do licenses: In progress
+- [x] Write some testing for this thing (Thanks @shepherdjay)
+- [ ] Document the code properly: In progress
+- [ ] Restructure directories to make more sense
+- [x] Refactoring for use as a CLI tool. Will release as v1 once that work is done
