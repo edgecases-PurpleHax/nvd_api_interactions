@@ -1,13 +1,13 @@
 import argparse
+import csv
 import datetime
 import json
 import sys
 import textwrap
 import time
 import urllib
-import requests
-import csv
 
+import requests
 
 # todo: This should be done with argparse at first. Make it work with CLI then eventually figure out how to make it
 #  work with Flask to make a pretty dashboard or some shit.
@@ -88,15 +88,15 @@ def get_cve_after_date(start_date):
 
 def load_parsed_data_file(file, output=False, outfile=None):
     if not output:
-        with open(file, 'r') as f:
+        with open(file, "r") as f:
             for line in f.readlines():
                 # print(line.strip())
                 print(get_cve_by_id(line.strip()))
     elif output:
         print(f"Writing to {outfile}. No output will display.")
-        with open(file, 'r') as f:
+        with open(file, "r") as f:
             for line in f.readlines():
-                with open(outfile, 'a') as g:
+                with open(outfile, "a") as g:
                     g.write(get_cve_by_id(line.strip()))
 
 
@@ -155,9 +155,13 @@ def get_all_cves():
                 f"https://services.nvd.nist.gov/rest/json/cves/1.0?startIndex={page}"
             )
             if page == 0:
-                print(f"Downloading {page + 1}/{int(r.json().get('totalResults') / 20 + 1)}")
+                print(
+                    f"Downloading {page + 1}/{int(r.json().get('totalResults') / 20 + 1)}"
+                )
             else:
-                print(f"Downloading {int(page / 20 + 1)}/{int(r.json().get('totalResults') / 20 + 1)}")
+                print(
+                    f"Downloading {int(page / 20 + 1)}/{int(r.json().get('totalResults') / 20 + 1)}"
+                )
             page = page + 20
             time.sleep(3)
             for cve in next_page.json().get("result").get("CVE_Items"):
@@ -179,7 +183,7 @@ def format_existing_json(file):
     to_format = {}
     with open(file, "r") as f:
         to_format.update(json.load(f))
-    file = str(file).split('.')[0]
+    file = str(file).split(".")[0]
     with open(f"{file}_formatted.txt", "a+") as f:
         f.write(format_cve_information(to_format))
     return f"{file}_formatted.txt"
@@ -187,8 +191,8 @@ def format_existing_json(file):
 
 def lacework_report_parser(report):
     cves = []
-    with open(report, 'r') as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
+    with open(report, "r") as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=",")
         line_count = 0
         for row in csv_reader:
             if line_count == 0:
@@ -197,11 +201,12 @@ def lacework_report_parser(report):
             else:
                 if row[0] not in cves:
                     cves.append(row[0])
-    report = str(report).split('.')[0]
-    with open(f'{report}_report_output_{datetime.date.today()}.txt', 'w') as file:
+    report = str(report).split(".")[0]
+    with open(f"{report}_report_output_{datetime.date.today()}.txt",
+              "w") as file:
         for cve in cves:
-            file.write(cve+"\r")
-    return f'{report}_report_output_{datetime.date.today()}.txt'
+            file.write(cve + "\r")
+    return f"{report}_report_output_{datetime.date.today()}.txt"
 
 
 # Argument parsing: Used when CLI tool not run
@@ -213,14 +218,14 @@ def parse_args():
         "--all",
         action="store_true",
         help="Use this only one time. It will write a file with the"
-             "entire NVD database",
+        "entire NVD database",
     )
     parser.add_argument(
         "-i",
         "--get-by-id",
         action="store_true",
         help="Requires -I/--ID <CVE ID>. Gets information "
-             "about CVE ID provided",
+        "about CVE ID provided",
     )
     parser.add_argument("-I",
                         "--ID",
@@ -231,8 +236,8 @@ def parse_args():
         "--between-dates",
         action="store_true",
         help="Requires -S/--Start-Date <Start Date> "
-             "and -E/--End-Date <End Date>,gets all "
-             "CVEs between the start and end date",
+        "and -E/--End-Date <End Date>,gets all "
+        "CVEs between the start and end date",
     )
     parser.add_argument("-S",
                         "--Start-Date",
@@ -247,20 +252,25 @@ def parse_args():
         "--After-Date",
         action="store_true",
         help="Requires -S/--Start-Date <start date>. Gets"
-             " all CVE from Start date to current date",
+        " all CVE from Start date to current date",
     )
     parser.add_argument(
         "-f",
         "--format",
         action="store_true",
         help="Requires -F/--File <file name>. Formats an existing json file"
-             "from NVD API",
+        "from NVD API",
     )
     parser.add_argument("-F",
                         "--File",
                         action="store",
                         help="Enter file name to format")
-    parser.add_argument("-if", "--input-file", action="store", help="input new line separated file of cve identifiers")
+    parser.add_argument(
+        "-if",
+        "--input-file",
+        action="store",
+        help="input new line separated file of cve identifiers",
+    )
     parser.add_argument("-o", "--output", action="store")
     args = parser.parse_args(args=None if sys.argv[1:] else ["--help"])
     return args
@@ -299,6 +309,8 @@ if __name__ == "__main__":
             format_existing_json(args.File)
     if args.input_file:
         if args.output:
-            load_parsed_data_file(args.input_file, output=True, outfile=args.output)
+            load_parsed_data_file(args.input_file,
+                                  output=True,
+                                  outfile=args.output)
         else:
             load_parsed_data_file(args.input_file)
