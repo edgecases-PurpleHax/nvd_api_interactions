@@ -78,8 +78,7 @@ def get_cve_after_date(start_date):
             page = page + 20
             time.sleep(3)
             for cve in next_page.json().get("result").get("CVE_Items"):
-                with open(f"Vulnerability_list_since_{start_date}.txt",
-                          "a+") as f:
+                with open(f"Vulnerability_list_since_{start_date}.txt", "a+") as f:
                     f.write(format_cve_information(next_page.json()))
     else:
         return r.json()
@@ -127,8 +126,8 @@ def get_cve_between(start_date, end_date):
             time.sleep(3)
             for cve in next_page.json().get("result").get("CVE_Items"):
                 with open(
-                        f"Vulnerabilities_between_{start_date}_and_{end_date}.txt",
-                        "a+") as f:
+                    f"Vulnerabilities_between_{start_date}_and_{end_date}.txt", "a+"
+                ) as f:
                     f.write(format_cve_information(next_page.json()))
     else:
         return r.json()
@@ -136,8 +135,7 @@ def get_cve_between(start_date, end_date):
 
 
 def get_cve_by_id(cve_id):
-    r = requests.get(
-        f"https://services.nvd.nist.gov/rest/json/cve/1.0/{cve_id}")
+    r = requests.get(f"https://services.nvd.nist.gov/rest/json/cve/1.0/{cve_id}")
     return format_cve_information(r.json())
 
 
@@ -202,8 +200,7 @@ def lacework_report_parser(report):
                 if row[0] not in cves:
                     cves.append(row[0])
     report = str(report).split(".")[0]
-    with open(f"{report}_report_output_{datetime.date.today()}.txt",
-              "w") as file:
+    with open(f"{report}_report_output_{datetime.date.today()}.txt", "w") as file:
         for cve in cves:
             file.write(cve + "\r")
     return f"{report}_report_output_{datetime.date.today()}.txt"
@@ -224,13 +221,11 @@ def parse_args():
         "-i",
         "--get-by-id",
         action="store_true",
-        help="Requires -I/--ID <CVE ID>. Gets information "
-        "about CVE ID provided",
+        help="Requires -I/--ID <CVE ID>. Gets information " "about CVE ID provided",
     )
-    parser.add_argument("-I",
-                        "--ID",
-                        action="store",
-                        help="Enter CVE ID in the format CVE-2021-3165.")
+    parser.add_argument(
+        "-I", "--ID", action="store", help="Enter CVE ID in the format CVE-2021-3165."
+    )
     parser.add_argument(
         "-b",
         "--between-dates",
@@ -239,14 +234,12 @@ def parse_args():
         "and -E/--End-Date <End Date>,gets all "
         "CVEs between the start and end date",
     )
-    parser.add_argument("-S",
-                        "--Start-Date",
-                        action="store",
-                        help="Enter in the format YYYY-MM-DD")
-    parser.add_argument("-E",
-                        "--End-Date",
-                        action="store",
-                        help="Enter in the format YYYY-MM-DD")
+    parser.add_argument(
+        "-S", "--Start-Date", action="store", help="Enter in the format YYYY-MM-DD"
+    )
+    parser.add_argument(
+        "-E", "--End-Date", action="store", help="Enter in the format YYYY-MM-DD"
+    )
     parser.add_argument(
         "-A",
         "--After-Date",
@@ -261,10 +254,9 @@ def parse_args():
         help="Requires -F/--File <file name>. Formats an existing json file"
         "from NVD API",
     )
-    parser.add_argument("-F",
-                        "--File",
-                        action="store",
-                        help="Enter file name to format")
+    parser.add_argument(
+        "-F", "--File", action="store", help="Enter file name to format"
+    )
     parser.add_argument(
         "-if",
         "--input-file",
@@ -309,8 +301,6 @@ if __name__ == "__main__":
             format_existing_json(args.File)
     if args.input_file:
         if args.output:
-            load_parsed_data_file(args.input_file,
-                                  output=True,
-                                  outfile=args.output)
+            load_parsed_data_file(args.input_file, output=True, outfile=args.output)
         else:
             load_parsed_data_file(args.input_file)
