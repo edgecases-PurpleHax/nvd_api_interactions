@@ -63,4 +63,4 @@ to have expectations that won't be met.
 * Major Releases: If completely new functionality is added, a major version release will occur. Anything else will be 
 covered under minor version release.
 ## Licensing
-Please see License.md for license information
+Please see License for license information
