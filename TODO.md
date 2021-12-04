@@ -6,3 +6,4 @@
 - [ ] Document the code properly: In progress  
 - [ ] Restructure directories to make more sense  
 - [x] Refactoring for use as a CLI tool. Will release as v1 once that work is done  
+git
