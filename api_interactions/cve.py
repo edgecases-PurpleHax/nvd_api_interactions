@@ -9,11 +9,11 @@ import urllib
 
 import requests
 
-# todo: This should be done with argparse at first. Make it work with CLI then eventually figure out how to make it
-#  work with Flask to make a pretty dashboard or some shit.
-
 
 class MyParser(argparse.ArgumentParser):
+    """
+    This is so that if the user just runs the file with no arguments, it actually prints the help options
+    """
     def error(self, message):
         sys.stderr.write(f"error: {message}\n")
         self.print_help()
@@ -22,6 +22,11 @@ class MyParser(argparse.ArgumentParser):
 
 # Api Interactions
 def format_cve_information(cve):
+    """
+    Used to create the structure of the output for CVEs.
+    :param cve: Json object that defines the attributes of the CVE
+    :return: Structured output of CVE Data.
+    """
     for test in cve.get("result").get("CVE_Items"):
         try:
             return f"""
@@ -58,7 +63,12 @@ ______________________________________________________________________
 
 
 def get_cve_after_date(start_date):
-    # todo: Documentation. Get this ready for argparse. Make it pretty.
+    # todo: Implement in CLI Tool for v2, it is not currently in use except during stand alone script
+    """
+    Get all CVEs from start date specified to current date
+    :param start_date: Start date entered in YYYY-MM-DD format
+    :return: json object to be used with format_cve_information
+    """
     r = requests.get(
         f"https://services.nvd.nist.gov/rest/json/cves/1.0?pubStartDate={start_date}T00:00:00:000 UTC-05:00"
     )
@@ -87,6 +97,13 @@ def get_cve_after_date(start_date):
 
 
 def load_parsed_data_file(file, output=False, outfile=None):
+    """
+    Loads a newline seperated file created by the lacework_report_parser function or by the user
+    :param file: File to load
+    :param output: Boolean defining if output should be written
+    :param outfile: if ouput == True, the filename to write the output too
+    :return: either prints data created by get_cve_id or writes the data to file
+    """
     if not output:
         with open(file, "r") as f:
             for line in f.readlines():
@@ -101,6 +118,12 @@ def load_parsed_data_file(file, output=False, outfile=None):
 
 
 def get_cve_between(start_date, end_date):
+    """
+    Gets all CVEs between the specified start date and specified end date
+    :param start_date: Specify start date in YYYY-MM-DD Format
+    :param end_date: Specify end date in YYYY-MM-DD Format
+    :return: If results are greater than 20, writes paginated json to file, else returns json
+    """
     params = {
         "pubStartDate": f"{start_date}T00:00:00:000 UTC-05:00",
         "pubEndDate": f"{end_date}T00:00:00:000 UTC-05:00",
@@ -136,12 +159,21 @@ def get_cve_between(start_date, end_date):
 
 
 def get_cve_by_id(cve_id):
+    """
+    Gets json object for specified CVE
+    :param cve_id: CVE Identifier specified in format CVE-XXXX-XXXX
+    :return: Structured Data from format_cve_information
+    """
     r = requests.get(
         f"https://services.nvd.nist.gov/rest/json/cve/1.0/{cve_id}")
     return format_cve_information(r.json())
 
 
 def get_all_cves():
+    """
+    Gets the current NV Database in its entirety. In use, warns user that the application will run for a long time
+    :return: Returns the entire NV Database in format_cve_information structured Data
+    """
     r = requests.get(f"https://services.nvd.nist.gov/rest/json/cves/1.0")
     if r.json()["totalResults"] > 20:
         print(
@@ -174,12 +206,17 @@ def get_all_cves():
                 except:
                     pass
         else:
-            return r.json()
+            return format_cve_information(r.json())
     return 0
 
 
 # Formatting scripts
 def format_existing_json(file):
+    """
+    Used to format previously downloaded json file from NVD API
+    :param file: Filename to load
+    :return: Writes formatted data to disk, returns file name for use in CLI
+    """
     to_format = {}
     with open(file, "r") as f:
         to_format.update(json.load(f))
@@ -190,6 +227,11 @@ def format_existing_json(file):
 
 
 def lacework_report_parser(report):
+    """
+    Parses Lacework Vulnerability reports, generates newline separated file
+    :param report: The filename of the report to parse
+    :return: Writes newline separated file for parsing
+    """
     cves = []
     with open(report, "r") as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=",")
@@ -211,6 +253,10 @@ def lacework_report_parser(report):
 
 # Argument parsing: Used when CLI tool not run
 def parse_args():
+    """
+    Used to allow for standalone script with command line arguments.
+    :return: Information for main function if used as stand alone script.
+    """
     description = "A script to interact with the NVD API."
     parser = MyParser(description=description)
     parser.add_argument(
