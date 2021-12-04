@@ -42,20 +42,20 @@ prompts. The following menus are available:
 
 A script to interact with the NVD API.
 
-optional arguments:  
- -h, --help show this help message and exit  
- -a, --all Use this only one time. It will write a file with theentire NVD database  
- -i, --get-by-id Requires -I/--ID <CVE ID>. Gets information about CVE ID provided  
- -I ID, --ID ID Enter CVE ID in the format CVE-2021-3165.  
- -b, --between-dates Requires -S/--Start-Date <Start Date> and -E/--End-Date <End Date>,gets all CVEs between the start and end date  
- -S START_DATE, --Start-Date START_DATE (Enter in the format YYYY-MM-DD)  
- -E END_DATE, --End-Date END_DATE  
- Enter in the format YYYY-MM-DD  
- -A, --After-Date Requires -S/--Start-Date <start date>. Gets all CVE from Start date to current date  
- -f, --format Requires -F/--File <file name>. Formats an existing json filefrom NVD API  
- -F FILE, --File FILE Enter file name to format  
+optional arguments:
+ -h, --help show this help message and exit
+ -a, --all Use this only one time. It will write a file with theentire NVD database
+ -i, --get-by-id Requires -I/--ID <CVE ID>. Gets information about CVE ID provided
+ -I ID, --ID ID Enter CVE ID in the format CVE-2021-3165.
+ -b, --between-dates Requires -S/--Start-Date <Start Date> and -E/--End-Date <End Date>,gets all CVEs between the start and end date
+ -S START_DATE, --Start-Date START_DATE (Enter in the format YYYY-MM-DD)
+ -E END_DATE, --End-Date END_DATE
+ Enter in the format YYYY-MM-DD
+ -A, --After-Date Requires -S/--Start-Date <start date>. Gets all CVE from Start date to current date
+ -f, --format Requires -F/--File <file name>. Formats an existing json filefrom NVD API
+ -F FILE, --File FILE Enter file name to format
  -if INPUT_FILE, --input-file INPUT_FILE
-input new line separated file of cve identifiers  
+input new line separated file of cve identifiers
  -o OUTPUT, --output OUTPUT
 
 ### Installation
@@ -63,7 +63,7 @@ input new line separated file of cve identifiers
 For now, the easiest way to install is to follow normal github process
 
 - Git clone https://github.com/rwils83/nvd_api_interactions.git
-- pip install -r requirements.txt  
+- pip install -r requirements.txt
   Future minor release will include a proper setup file
 
 ## Future Releases
