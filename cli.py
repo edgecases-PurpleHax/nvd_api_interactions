@@ -32,7 +32,11 @@ def cve_option():
             "message": "Input cve id (Format: CVE-XXXX-XXXX):",
         }
         outfile = [
-            {"type": "confirm", "name": "output", "message": "Write to file?"},
+            {
+                "type": "confirm",
+                "name": "output",
+                "message": "Write to file?"
+            },
             {
                 "type": "input",
                 "name": "file_name",
@@ -47,24 +51,28 @@ def cve_option():
             print(f"will write file{write_file.get('file_name')}")
         print(cve.get_cve_by_id(cve_id))
     if answers["Cve"] == "Get All":
-        sub_menu = [
-            {
-                "type": "confirm",
-                "name": "getallconfirm",
-                "message": "Warning. This process may (will) take a long time. You may want to get a drink, "
-                "take a smoke break, or nap. Seriously. There are over 120,000 CVEs, and there is a 3 "
-                "second break between every 20. Continue?",
-            }
-        ]
+        sub_menu = [{
+            "type":
+            "confirm",
+            "name":
+            "getallconfirm",
+            "message":
+            "Warning. This process may (will) take a long time. You may want to get a drink, "
+            "take a smoke break, or nap. Seriously. There are over 120,000 CVEs, and there is a 3 "
+            "second break between every 20. Continue?",
+        }]
         get_all_prompt = prompt(sub_menu, style=custom_style_3)
         if get_all_prompt["getallconfirm"]:
             cve.get_all_cves()
     if answers["Cve"] == "Get from File":
         submenu = [
             {
-                "type": "confirm",
-                "name": "filewarning",
-                "message": "File must be newline seperated at this time. Continue?",
+                "type":
+                "confirm",
+                "name":
+                "filewarning",
+                "message":
+                "File must be newline seperated at this time. Continue?",
             },
             {
                 "type": "input",
@@ -103,22 +111,25 @@ def formatting_options():
         "type": "list",
         "name": "Formatting",
         "message": "Formatting Main Screen",
-        "choices": ["Format existing NVD Json", "Parse Lacework Report", "Exit"],
+        "choices":
+        ["Format existing NVD Json", "Parse Lacework Report", "Exit"],
     }
     answers = prompt(menu_prompt, style=custom_style_3)
-    sub_menu = [
-        {
-            "type": "input",
-            "name": "loadfile",
-            "message": "Enter the name of the file to load: ",
-        }
-    ]
+    sub_menu = [{
+        "type": "input",
+        "name": "loadfile",
+        "message": "Enter the name of the file to load: ",
+    }]
     if answers["Formatting"] == "Format existing NVD Json":
         sub_answer = prompt(sub_menu, style=custom_style_3)
-        print(f"Writing file: {cve.format_existing_json(sub_answer['loadfile'])}")
+        print(
+            f"Writing file: {cve.format_existing_json(sub_answer['loadfile'])}"
+        )
     if answers["Formatting"] == "Parse Lacework Report":
         sub_answer = prompt(sub_menu, style=custom_style_3)
-        print(f'Writing file: {cve.lacework_report_parser(sub_answer["loadfile"])}')
+        print(
+            f'Writing file: {cve.lacework_report_parser(sub_answer["loadfile"])}'
+        )
 
 
 def main():
