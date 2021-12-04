@@ -6,6 +6,7 @@ searching, which is extremely time-consuming. Originally, this project was just 
 but I realized with my current task I could make it into something a little more. 
 ## Usage
 Currently, there are two options for using the application. 
+Please see Documentation/html/index.html in a browser for class definitions, function definitions, etc...  
 ### 1. Using the CLI Tool.
 This is my recommended method if you are doing larger amounts of work with CVEs. Simply run cli.py and interact with
 prompts. The following menus are available:
